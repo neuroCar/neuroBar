@@ -1,0 +1,12 @@
+[package]
+name = "neurobar2"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+chrono = "0.4.45"
+gtk-blueprint = "0.2.0"
+gtk4 = { version = "0.11.5", features = ["v4_20"] }
+gtk4-layer-shell = "0.8.1"
+zbus = "5.19.0"
+zbus_systemd = { version = "0.26200.0", features = ["login1"] }

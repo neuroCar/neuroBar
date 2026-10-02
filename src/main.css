@@ -1,0 +1,45 @@
+.searchBar {
+    border: 10px;
+    padding: 10px 15px;
+    border-radius: 10px;
+}
+
+popover.menu-popup {
+    margin-bottom: 8px;
+}
+
+@media (prefers-color-scheme: light) {
+    .widget {
+        background-image: none;
+        border-color: black;
+        color: black;
+        background-color: white;
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    .taskbar {
+        background-color: #111111;
+    }
+    .widget {
+        background-image: none;
+        border-color: #343434;
+        color: #575757;
+        background-color: #232323;
+    }
+    .menu {
+        color: white;
+    }
+    popover {
+        background-color: #232323;
+        margin: 0px;
+        padding: 0px;
+    }
+    popover contents {
+        background-color: #232323;
+        margin: 0px;
+        padding: 5px;
+        padding-top: 0px;
+        padding-bottom: 0px;
+    }
+}

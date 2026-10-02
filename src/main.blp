@@ -1,0 +1,117 @@
+using Gtk 4.0;
+
+ApplicationWindow window {
+	default-height: 32;
+	decorated: false;
+	Box taskbar {
+		height-request: 32;
+		orientation: horizontal;
+		halign: fill;
+		valign: center;
+		hexpand: true;
+		styles["taskbar"]
+
+		Box search {
+			Button menuBtn {
+				width-request: 32;
+				hexpand: false;
+				tooltip-text: _("Menu");
+				Image {
+					icon-name: "open-menu-symbolic";
+					pixel-size: 32;
+				}
+				styles["widget"]
+			}
+
+			Text searchBar {
+				margin-start: 4;
+				placeholder-text: _("search");
+				styles["widget", "searchBar"]
+			}
+		}
+
+		Box shortcuts {
+			margin-start: 4;
+			hexpand: true;
+
+			Button shortcut1 {
+				label: _("Shortcut 1");
+				styles["widget"]
+			}
+		}
+
+		[end]
+		Box tray {
+			margin-start: 4;
+
+			Label lbl {
+				label: _("Lbl");
+				styles["widget"]
+			}
+
+			Label clock {
+			  label: _("");
+			  styles["widget"]
+			}
+		}
+		Popover start {
+			position: top;
+			autohide: true;
+			has-arrow: false;
+			halign: start;
+			valign: start;
+			Box {
+				orientation: horizontal;
+				width-request: 512;
+				Box {
+					orientation: vertical;
+					height-request: 512;
+					vexpand: true;
+					width-request: 32;
+					Button settings {
+						Image { icon-name: "org.gnome.Settings-symbolic"; }
+						width-request: 32;
+						height-request: 32;
+						styles["widget"]
+					}
+					Separator { vexpand: true; styles["widget"] }
+					Button sleep {
+						Image { icon-name: "system-lock-screen-symbolic"; }
+						width-request: 32;
+						height-request: 32;
+						styles["widget"]
+					}
+					Button logout {
+						Image { icon-name: "system-log-out-symbolic"; }
+						width-request: 32;
+						height-request: 32;
+						styles["widget"]
+					}
+					Button reboot {
+						Image { icon-name: "system-reboot-symbolic"; }
+						width-request: 32;
+						height-request: 32;
+						styles["widget"]
+					}
+					Button shutdown {
+						Image { icon-name: "system-shutdown-symbolic"; }
+						width-request: 32;
+						height-request: 32;
+						styles["widget"]
+					}
+				}
+				ScrolledWindow {
+					FlowBox apps {
+						hexpand: true;
+						row-spacing: 4;
+						column-spacing: 4;
+						selection-mode: none;
+						// styles[ "apps"]
+					}
+					styles["taskbar", "start-menu"]
+				}
+			}
+			styles["widget", "start-menu"]
+		}
+	}
+}
