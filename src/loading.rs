@@ -1,7 +1,23 @@
 use gtk4 as gtk;
 use gtk::{glib, gdk, gio, prelude::*};
+use std::time::Duration;
 
 use crate::sd;
+
+fn set_time(clock: gtk::Label) {
+    glib::timeout_add_local(Duration::from_secs(1), move || {
+        let time = chrono::Local::now(); 
+        let time_str = time.format("%H:%M").to_string();
+        clock.set_label(&time_str);
+
+        glib::ControlFlow::Continue
+    });
+}
+
+pub fn load_tray(builder: gtk::Builder) {
+    let clock = builder.object::<gtk::Label>("clock").expect("Label not found");
+    set_time(clock.clone());
+}
 
 pub fn load_session_buttons(builder: gtk::Builder) {
     // TODO: Add settings app

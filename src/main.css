@@ -27,8 +27,12 @@ popover.menu-popup {
         color: #575757;
         background-color: #232323;
     }
-    .menu {
+    .tray-labels {
+        background-image: none;
         color: white;
+        border-color: #343434;
+        background-color: #232323;
+        padding: 5px;
     }
     popover {
         background-color: #232323;

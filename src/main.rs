@@ -24,6 +24,7 @@ fn activate(app: &gtk::Application) {
     loading::load_css();
     loading::load_apps(builder.clone());
     loading::load_session_buttons(builder.clone());
+    loading::load_tray(builder.clone());
 
     win.set_application(Some(app));
     win.present();
@@ -38,10 +39,6 @@ fn main() -> glib::ExitCode {
     app.connect_activate(|app| {
         activate(app);
     });
-
-    // Test for Time label
-    let time = chrono::Local::now();
-    println!("{}", time.format("%B %e, %Y %H:%M"));
 
     app.run()
 }
