@@ -24,8 +24,15 @@ popover.menu-popup {
     .widget {
         background-image: none;
         border-color: #343434;
-        color: #575757;
+        color: #878787;
         background-color: #232323;
+    }
+    .menuBtn > button {
+        background-image: none;
+        box-shadow: none;
+        color: white;
+        border-color: #343434;
+        background: #232323;
     }
     .tray-labels {
         background-image: none;
@@ -38,6 +45,7 @@ popover.menu-popup {
         background-color: #232323;
         margin: 0px;
         padding: 0px;
+        border-radius: 8px;
     }
     popover contents {
         background-color: #232323;

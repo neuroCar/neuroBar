@@ -10,15 +10,6 @@ mod battery;
 fn activate(app: &gtk::Application) {
     let builder = gtk::Builder::from_string(include_blp!("src/main.blp"));
     let win = builder.object::<gtk::ApplicationWindow>("window").expect("Window not found");
-    let menu_btn = builder.object::<gtk::Button>("menuBtn").expect("Menu button not found");
-    menu_btn.connect_clicked({
-        let pop = builder.object::<gtk::Popover>("start").expect("Start not found");
-        let popover = pop.clone();
-        move |_| {
-            popover.popup();
-        }
-    });
- 
     win.init_layer_shell(); win.set_layer(Layer::Top); win.auto_exclusive_zone_enable();
     for anchor in [Edge::Bottom, Edge::Left, Edge::Right] { win.set_anchor(anchor, true); }
 

@@ -1,6 +1,7 @@
 use gtk4 as gtk;
 use gtk::{glib, gdk, gio, prelude::*};
 use std::time::Duration;
+use std::collections::HashMap;
 
 use crate::sd;
 use crate::battery;
@@ -40,12 +41,46 @@ fn set_battery_label(battery: gtk::Label, battery_icon: gtk::Image) {
         }});
 }
 
+fn set_ppd_icon(ppd_icon: gtk::Image) {
+    let ppd_icon = ppd_icon.clone();
+    glib::MainContext::default().spawn_local(async move {
+        loop {
+            match sd::power_profile_fns("current_profile", None).await {
+                Ok(profile) => {
+                    let icons = HashMap::from([(String::from("power-saver"), "power-profile-power-saver-symbolic"), (String::from("balanced"), "power-profile-balanced-symbolic"), (String::from("performance"), "power-profile-performance-symbolic")]);
+                    ppd_icon.set_icon_name(Some(icons[&profile]));
+                }
+                _ => { eprintln!("Failed to set icon"); }
+            }
+            glib::timeout_future_seconds(1).await;
+        }
+    });
+}
+
 pub fn load_tray(builder: gtk::Builder) {
     let clock = builder.object::<gtk::Label>("clock").expect("Label not found");
     let battery = builder.object::<gtk::Label>("battery").expect("Label not found");
     let battery_icon = builder.object::<gtk::Image>("batteryIco").expect("Icon not found");
+    let ppd_icon = builder.object::<gtk::Image>("profileIco").expect("Icon not found");
+
+    let ppd_btn_list = ["powerSaving", "balanced", "performance"];
+    let profiles = ["power-saver", "balanced", "performance"];
+    for i in 0..profiles.len() {
+        let btn = builder.object::<gtk::Button>(ppd_btn_list[i]).expect("Check Button not found");
+        btn.connect_clicked(move |_| {
+            let i = i.clone();
+            let profiles = profiles.clone();
+            glib::MainContext::default().spawn_local(async move {
+                match sd::power_profile_fns("set_profile", Some(profiles[i])).await {
+                    Ok(_) => { println!("Sucess"); }
+                    _ => { println!("Failed"); }
+                }
+            });
+        });
+    }
     set_time(clock.clone());
     set_battery_label(battery.clone(), battery_icon.clone());
+    set_ppd_icon(ppd_icon.clone());
 }
 
 pub fn load_session_buttons(builder: gtk::Builder) {
@@ -55,9 +90,9 @@ pub fn load_session_buttons(builder: gtk::Builder) {
     for i in 0..cmd_list.len() {
         let btn = builder.object::<gtk::Button>(cmd_list[i]).expect("Button not found");
         btn.connect_clicked(move |_| {
-            glib::MainContext::default().spawn_local(async move { if let Err(e) = sd::systemd_fns(cmd_list[i]).await {
+            glib::MainContext::default().spawn_local(async move { if let Err(e) = sd::systemd_session_fns(cmd_list[i]).await {
                 eprintln!("Failed to {}: {e}", cmd_list[i]);
-            } });
+            }});
         });
     }
 }

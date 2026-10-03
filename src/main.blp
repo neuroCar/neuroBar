@@ -12,7 +12,8 @@ ApplicationWindow window {
 		styles["taskbar"]
 
 		Box search {
-			Button menuBtn {
+			MenuButton menuBtn {
+				popover: start;
 				width-request: 32;
 				hexpand: false;
 				tooltip-text: _("Menu");
@@ -20,7 +21,7 @@ ApplicationWindow window {
 					icon-name: "open-menu-symbolic";
 					pixel-size: 32;
 				}
-				styles["widget"]
+				styles["menuBtn"]
 			}
 
 			Text searchBar {
@@ -52,6 +53,17 @@ ApplicationWindow window {
 					label: _("Percentage");
 					styles["tray-labels"]
 				}
+			}
+
+			MenuButton powerProfiles {
+				popover: powerOptions;
+				height-request: 32;
+				width-request: 32;
+				Image profileIco {
+					icon-name: "power-profile-balanced-symbolic";
+					pixel-size: 16;
+				}
+				styles["menuBtn"]
 			}
 
 			Label clock {
@@ -117,6 +129,27 @@ ApplicationWindow window {
 				}
 			}
 			styles["widget", "start-menu"]
+		}
+		Popover powerOptions {
+			has-arrow: false;
+			valign: end;
+			halign: end;
+			Box {
+				orientation: vertical;
+				Button powerSaving {
+					label: _("Power-saving mode");
+					styles["widget"]
+				}
+				Button balanced {
+					label: _("Balanced mode");
+					styles["widget"]
+				}
+				Button performance {
+					label: _("Performance mode");
+					styles["widget"]
+				}
+				styles["widget"]
+			}
 		}
 	}
 }
