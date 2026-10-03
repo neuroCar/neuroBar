@@ -854,7 +854,6 @@ dependencies = [
  "gtk4",
  "gtk4-layer-shell",
  "zbus",
- "zbus_systemd",
 ]
 
 [[package]]
@@ -1524,16 +1523,6 @@ dependencies = [
  "serde",
  "winnow",
  "zvariant",
-]
-
-[[package]]
-name = "zbus_systemd"
-version = "0.26200.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e0b9e5661e7491cf89fbd8402c1c61320f655c5cf69eaae22c6bd350298b065d"
-dependencies = [
- "serde",
- "zbus",
 ]
 
 [[package]]

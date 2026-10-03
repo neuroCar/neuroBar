@@ -44,9 +44,14 @@ ApplicationWindow window {
 		Box tray {
 			margin-start: 4;
 
-			Label lbl {
-				label: _("Lbl");
-				styles["tray-labels"]
+			Box {
+				Image batteryIco {
+					styles["tray-labels"]
+				}
+				Label battery {
+					label: _("Percentage");
+					styles["tray-labels"]
+				}
 			}
 
 			Label clock {

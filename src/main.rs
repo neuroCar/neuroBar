@@ -5,6 +5,7 @@ use gtk_blueprint::*;
 
 mod sd;
 mod loading;
+mod battery;
 
 fn activate(app: &gtk::Application) {
     let builder = gtk::Builder::from_string(include_blp!("src/main.blp"));

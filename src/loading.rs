@@ -3,6 +3,7 @@ use gtk::{glib, gdk, gio, prelude::*};
 use std::time::Duration;
 
 use crate::sd;
+use crate::battery;
 
 fn set_time(clock: gtk::Label) {
     glib::timeout_add_local(Duration::from_secs(1), move || {
@@ -14,9 +15,37 @@ fn set_time(clock: gtk::Label) {
     });
 }
 
+fn set_battery_label(battery: gtk::Label, battery_icon: gtk::Image) {
+    let battery_label = battery.clone();
+    let bat_ico = battery_icon.clone();
+    glib::MainContext::default().spawn_local(async move {
+        loop {
+            match battery::get_icon().await {
+                Ok(icon_name) => {
+                    bat_ico.set_icon_name(Some(&icon_name));
+                }
+                Err(err) => {
+                    eprintln!("Failed to get battery percentage: {err}");
+                }
+            }
+            match battery::get_percentage().await {
+                Ok(percentage) => {
+                    battery_label.set_text(&format!("{percentage}%"));
+                }
+                Err(err) => {
+                    eprintln!("Failed to get battery percentage: {err}");
+                }
+            }
+            glib::timeout_future_seconds(5).await;
+        }});
+}
+
 pub fn load_tray(builder: gtk::Builder) {
     let clock = builder.object::<gtk::Label>("clock").expect("Label not found");
+    let battery = builder.object::<gtk::Label>("battery").expect("Label not found");
+    let battery_icon = builder.object::<gtk::Image>("batteryIco").expect("Icon not found");
     set_time(clock.clone());
+    set_battery_label(battery.clone(), battery_icon.clone());
 }
 
 pub fn load_session_buttons(builder: gtk::Builder) {
