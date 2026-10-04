@@ -6,6 +6,7 @@ use gtk_blueprint::*;
 mod sd;
 mod loading;
 mod battery;
+mod parser;
 
 fn activate(app: &gtk::Application) {
     let builder = gtk::Builder::from_string(include_blp!("src/main.blp"));
@@ -16,6 +17,7 @@ fn activate(app: &gtk::Application) {
     loading::load_css();
     loading::load_apps(builder.clone());
     loading::load_session_buttons(builder.clone());
+    loading::load_shortcuts(builder.clone());
     loading::load_tray(builder.clone());
 
     win.set_application(Some(app));
@@ -31,6 +33,8 @@ fn main() -> glib::ExitCode {
     app.connect_activate(|app| {
         activate(app);
     });
+
+    parser::parse_config().expect("Unable to get config");
 
     app.run()
 }

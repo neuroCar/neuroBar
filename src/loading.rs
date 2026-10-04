@@ -5,6 +5,7 @@ use std::collections::HashMap;
 
 use crate::sd;
 use crate::battery;
+use crate::parser;
 
 fn set_time(clock: gtk::Label) {
     glib::timeout_add_local(Duration::from_secs(1), move || {
@@ -81,6 +82,23 @@ pub fn load_tray(builder: gtk::Builder) {
     set_time(clock.clone());
     set_battery_label(battery.clone(), battery_icon.clone());
     set_ppd_icon(ppd_icon.clone());
+}
+
+pub fn load_shortcuts(builder: gtk::Builder) {
+    let shortcut_box = builder.object::<gtk::Box>("shortcuts").expect("Box not found");
+    let pinned = parser::parse_config().unwrap();
+    for app in pinned {
+        let icon = parser::get_app_icon(app.clone());
+        icon.set_pixel_size(24);
+        let btn = gtk::Button::builder()
+            .child(&icon)
+            .css_classes(["widget"])
+            .build();
+        btn.connect_clicked(move |_| {
+            parser::launch_app(app.clone());
+        });
+        shortcut_box.append(&btn);
+    }
 }
 
 pub fn load_session_buttons(builder: gtk::Builder) {

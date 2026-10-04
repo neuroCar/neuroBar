@@ -19,7 +19,7 @@ ApplicationWindow window {
 				tooltip-text: _("Menu");
 				Image {
 					icon-name: "open-menu-symbolic";
-					pixel-size: 32;
+					pixel-size: 16;
 				}
 				styles["menuBtn"]
 			}
@@ -34,11 +34,6 @@ ApplicationWindow window {
 		Box shortcuts {
 			margin-start: 4;
 			hexpand: true;
-
-			Button shortcut1 {
-				label: _("Shortcut 1");
-				styles["widget"]
-			}
 		}
 
 		[end]
@@ -69,6 +64,17 @@ ApplicationWindow window {
 			Label clock {
 			  label: _("");
 			  styles["tray-labels"]
+			}
+
+			MenuButton notiBtn {
+				height-request: 32;
+				width-request: 32;
+				popover: notiDrawer;
+				Image {
+					icon-name: "preferences-system-notifications-symbolic";
+					pixel-size: 16;
+				}
+				styles ["menuBtn"]
 			}
 		}
 		Popover start {
@@ -150,6 +156,21 @@ ApplicationWindow window {
 				}
 				styles["widget"]
 			}
+		}
+		Popover notiDrawer {
+			Box {
+				orientation: vertical;
+				Box notis {
+					orientation: vertical;
+					styles ["widget"]
+				}
+				Button clearAll {
+					label: _("Clear All");
+					styles["widget"]
+				}
+				styles["widget"]
+			}
+			styles["widget"]
 		}
 	}
 }
