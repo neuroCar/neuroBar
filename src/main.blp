@@ -65,17 +65,6 @@ ApplicationWindow window {
 			  label: _("");
 			  styles["tray-labels"]
 			}
-
-			MenuButton notiBtn {
-				height-request: 32;
-				width-request: 32;
-				popover: notiDrawer;
-				Image {
-					icon-name: "preferences-system-notifications-symbolic";
-					pixel-size: 16;
-				}
-				styles ["menuBtn"]
-			}
 		}
 		Popover start {
 			position: top;
@@ -156,21 +145,6 @@ ApplicationWindow window {
 				}
 				styles["widget"]
 			}
-		}
-		Popover notiDrawer {
-			Box {
-				orientation: vertical;
-				Box notis {
-					orientation: vertical;
-					styles ["widget"]
-				}
-				Button clearAll {
-					label: _("Clear All");
-					styles["widget"]
-				}
-				styles["widget"]
-			}
-			styles["widget"]
 		}
 	}
 }
