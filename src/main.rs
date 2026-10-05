@@ -7,6 +7,7 @@ mod sd;
 mod loading;
 mod battery;
 mod parser;
+mod volume;
 
 fn activate(app: &gtk::Application) {
     let builder = gtk::Builder::from_string(include_blp!("src/main.blp"));

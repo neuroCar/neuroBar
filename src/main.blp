@@ -40,6 +40,15 @@ ApplicationWindow window {
 		Box tray {
 			margin-start: 4;
 
+			MenuButton audioControls {
+				popover: volumePopup;
+				label: _("Volume");
+				Image audioIco {
+					styles["tray-labels"]
+				}
+				styles["menuBtn"]
+			}
+
 			Box {
 				Image batteryIco {
 					styles["tray-labels"]
@@ -124,6 +133,26 @@ ApplicationWindow window {
 				}
 			}
 			styles["widget", "start-menu"]
+		}
+		Popover volumePopup {
+			has-arrow: false;
+			valign: end;
+			halign: end;
+			Box {
+				orientation: horizontal;
+				Button muteBtn {
+					Image muteBtnIco {
+						icon-name: "audio-volume-muted-symbolic";
+						styles["widget"]
+					}
+					styles["widget"]
+				}
+				Scale volSlider {
+					width-request: 200;
+					styles["widget"]
+				}
+				styles["widget"]
+			}
 		}
 		Popover powerOptions {
 			has-arrow: false;

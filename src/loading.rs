@@ -1,11 +1,13 @@
 use gtk4 as gtk;
 use gtk::{glib, gdk, gio, prelude::*};
+use std::ffi::OsStr;
 use std::time::Duration;
 use std::collections::HashMap;
 
 use crate::sd;
 use crate::battery;
 use crate::parser;
+use crate::volume;
 
 fn set_time(clock: gtk::Label) {
     glib::timeout_add_local(Duration::from_secs(1), move || {
@@ -58,12 +60,33 @@ fn set_ppd_icon(ppd_icon: gtk::Image) {
     });
 }
 
+fn load_volume(builder: gtk::Builder) {
+    let audio_ico = builder.object::<gtk::Image>("audioIco").expect("Could not load icon");
+    let mute_btn = builder.object::<gtk::Button>("muteBtn").expect("Could not load btn");
+    let _mute_btn_ico = builder.object::<gtk::Image>("muteBtnIco").expect("Could not load icon");
+    let vol_slider = builder.object::<gtk::Scale>("volSlider").expect("Could not load slider");
+
+    mute_btn.connect_clicked(move |_| {
+        let _ = gio::Subprocess::newv(&[OsStr::new("wpctl"), OsStr::new("set-mute"), OsStr::new("@DEFAULT_SINK@"), OsStr::new("toggle")], gio::SubprocessFlags::STDOUT_PIPE).expect("Failed to run wpctl");
+    });
+
+    audio_ico.set_icon_name(Some(volume::get_volume_icon().expect("Volume not found")));
+
+    vol_slider.set_value(volume::get_volume());
+    vol_slider.set_range(0.00, 100.00);
+    vol_slider.connect_value_changed(move |scale| {
+        volume::set_volume(scale.value());
+        audio_ico.set_icon_name(Some(volume::get_volume_icon().expect("Volume not found")));
+    });
+}
+
 pub fn load_tray(builder: gtk::Builder) {
     let clock = builder.object::<gtk::Label>("clock").expect("Label not found");
+    
     let battery = builder.object::<gtk::Label>("battery").expect("Label not found");
     let battery_icon = builder.object::<gtk::Image>("batteryIco").expect("Icon not found");
+    
     let ppd_icon = builder.object::<gtk::Image>("profileIco").expect("Icon not found");
-
     let ppd_btn_list = ["powerSaving", "balanced", "performance"];
     let profiles = ["power-saver", "balanced", "performance"];
     for i in 0..profiles.len() {
@@ -82,6 +105,7 @@ pub fn load_tray(builder: gtk::Builder) {
     set_time(clock.clone());
     set_battery_label(battery.clone(), battery_icon.clone());
     set_ppd_icon(ppd_icon.clone());
+    load_volume(builder.clone());
 }
 
 pub fn load_shortcuts(builder: gtk::Builder) {
