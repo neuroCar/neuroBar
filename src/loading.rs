@@ -3,6 +3,7 @@ use gtk::{glib, gdk, gio, prelude::*};
 use std::ffi::OsStr;
 use std::time::Duration;
 use std::collections::HashMap;
+use chrono::prelude::*;
 
 use crate::sd;
 use crate::battery;
@@ -11,8 +12,8 @@ use crate::volume;
 
 fn set_time(clock: gtk::Label) {
     glib::timeout_add_local(Duration::from_secs(1), move || {
-        let time = chrono::Local::now(); 
-        let time_str = time.format("%H:%M").to_string();
+        let time: DateTime<Local> = chrono::Local::now(); 
+        let time_str: String = time.format("%H:%M").to_string();
         clock.set_label(&time_str);
 
         glib::ControlFlow::Continue
@@ -20,8 +21,8 @@ fn set_time(clock: gtk::Label) {
 }
 
 fn set_battery_label(battery: gtk::Label, battery_icon: gtk::Image) {
-    let battery_label = battery.clone();
-    let bat_ico = battery_icon.clone();
+    let battery_label: gtk4::Label = battery.clone();
+    let bat_ico: gtk4::Image = battery_icon.clone();
     glib::MainContext::default().spawn_local(async move {
         loop {
             match battery::get_icon().await {
@@ -45,12 +46,12 @@ fn set_battery_label(battery: gtk::Label, battery_icon: gtk::Image) {
 }
 
 fn set_ppd_icon(ppd_icon: gtk::Image) {
-    let ppd_icon = ppd_icon.clone();
+    let ppd_icon: gtk4::Image = ppd_icon.clone();
     glib::MainContext::default().spawn_local(async move {
         loop {
             match sd::power_profile_fns("current_profile", None).await {
                 Ok(profile) => {
-                    let icons = HashMap::from([(String::from("power-saver"), "power-profile-power-saver-symbolic"), (String::from("balanced"), "power-profile-balanced-symbolic"), (String::from("performance"), "power-profile-performance-symbolic")]);
+                    let icons: HashMap<String, &str> = HashMap::from([(String::from("power-saver"), "power-profile-power-saver-symbolic"), (String::from("balanced"), "power-profile-balanced-symbolic"), (String::from("performance"), "power-profile-performance-symbolic")]);
                     ppd_icon.set_icon_name(Some(icons[&profile]));
                 }
                 _ => { eprintln!("Failed to set icon"); }
@@ -61,10 +62,10 @@ fn set_ppd_icon(ppd_icon: gtk::Image) {
 }
 
 fn load_volume(builder: gtk::Builder) {
-    let audio_ico = builder.object::<gtk::Image>("audioIco").expect("Could not load icon");
-    let mute_btn = builder.object::<gtk::Button>("muteBtn").expect("Could not load btn");
-    let _mute_btn_ico = builder.object::<gtk::Image>("muteBtnIco").expect("Could not load icon");
-    let vol_slider = builder.object::<gtk::Scale>("volSlider").expect("Could not load slider");
+    let audio_ico: gtk4::Image = builder.object::<gtk::Image>("audioIco").expect("Could not load icon");
+    let mute_btn: gtk4::Button = builder.object::<gtk::Button>("muteBtn").expect("Could not load btn");
+    let _mute_btn_ico: gtk4::Image = builder.object::<gtk::Image>("muteBtnIco").expect("Could not load icon");
+    let vol_slider: gtk4::Scale = builder.object::<gtk::Scale>("volSlider").expect("Could not load slider");
 
     mute_btn.connect_clicked(move |_| {
         let _ = gio::Subprocess::newv(&[OsStr::new("wpctl"), OsStr::new("set-mute"), OsStr::new("@DEFAULT_SINK@"), OsStr::new("toggle")], gio::SubprocessFlags::STDOUT_PIPE).expect("Failed to run wpctl");
@@ -81,19 +82,19 @@ fn load_volume(builder: gtk::Builder) {
 }
 
 pub fn load_tray(builder: gtk::Builder) {
-    let clock = builder.object::<gtk::Label>("clock").expect("Label not found");
+    let clock: gtk4::Label = builder.object::<gtk::Label>("clock").expect("Label not found");
     
-    let battery = builder.object::<gtk::Label>("battery").expect("Label not found");
-    let battery_icon = builder.object::<gtk::Image>("batteryIco").expect("Icon not found");
+    let battery: gtk4::Label = builder.object::<gtk::Label>("battery").expect("Label not found");
+    let battery_icon: gtk4::Image = builder.object::<gtk::Image>("batteryIco").expect("Icon not found");
     
-    let ppd_icon = builder.object::<gtk::Image>("profileIco").expect("Icon not found");
-    let ppd_btn_list = ["powerSaving", "balanced", "performance"];
-    let profiles = ["power-saver", "balanced", "performance"];
+    let ppd_icon: gtk4::Image = builder.object::<gtk::Image>("profileIco").expect("Icon not found");
+    let ppd_btn_list: [&str; 3] = ["powerSaving", "balanced", "performance"];
+    let profiles: [&str; 3] = ["power-saver", "balanced", "performance"];
     for i in 0..profiles.len() {
-        let btn = builder.object::<gtk::Button>(ppd_btn_list[i]).expect("Check Button not found");
+        let btn: gtk4::Button = builder.object::<gtk::Button>(ppd_btn_list[i]).expect("Check Button not found");
         btn.connect_clicked(move |_| {
-            let i = i.clone();
-            let profiles = profiles.clone();
+            let i: usize = i.clone();
+            let profiles: [&str; 3] = profiles.clone();
             glib::MainContext::default().spawn_local(async move {
                 match sd::power_profile_fns("set_profile", Some(profiles[i])).await {
                     Ok(_) => { println!("Sucess"); }
@@ -109,12 +110,12 @@ pub fn load_tray(builder: gtk::Builder) {
 }
 
 pub fn load_shortcuts(builder: gtk::Builder) {
-    let shortcut_box = builder.object::<gtk::Box>("shortcuts").expect("Box not found");
-    let pinned = parser::parse_config().unwrap();
+    let shortcut_box: gtk4::Box = builder.object::<gtk::Box>("shortcuts").expect("Box not found");
+    let pinned: Vec<String> = parser::parse_config().unwrap();
     for app in pinned {
-        let icon = parser::get_app_icon(app.clone());
+        let icon: gtk4::Image = parser::get_app_icon(app.clone());
         icon.set_pixel_size(24);
-        let btn = gtk::Button::builder()
+        let btn: gtk4::Button = gtk::Button::builder()
             .child(&icon)
             .css_classes(["widget"])
             .build();
@@ -127,10 +128,10 @@ pub fn load_shortcuts(builder: gtk::Builder) {
 
 pub fn load_session_buttons(builder: gtk::Builder) {
     // TODO: Add settings app
-    let cmd_list = ["sleep", "logout", "reboot", "shutdown"];
+    let cmd_list: [&str; 4] = ["sleep", "logout", "reboot", "shutdown"];
     
     for i in 0..cmd_list.len() {
-        let btn = builder.object::<gtk::Button>(cmd_list[i]).expect("Button not found");
+        let btn: gtk4::Button = builder.object::<gtk::Button>(cmd_list[i]).expect("Button not found");
         btn.connect_clicked(move |_| {
             glib::MainContext::default().spawn_local(async move { if let Err(e) = sd::systemd_session_fns(cmd_list[i]).await {
                 eprintln!("Failed to {}: {e}", cmd_list[i]);
@@ -140,35 +141,35 @@ pub fn load_session_buttons(builder: gtk::Builder) {
 }
 
 pub fn load_apps(builder: gtk::Builder) {
-    let app_list_widget = builder.object::<gtk::FlowBox>("apps").expect("Apps not available");
-    let mut apps = gio::AppInfo::all();
+    let app_list_widget: gtk4::FlowBox = builder.object::<gtk::FlowBox>("apps").expect("Apps not available");
+    let mut apps: Vec<gio::AppInfo> = gio::AppInfo::all();
 
-    apps.retain(|app| app.should_show());
-    apps.sort_by_key(|app| app.name().to_lowercase());
+    apps.retain(|app: &gio::AppInfo| app.should_show());
+    apps.sort_by_key(|app: &gio::AppInfo| app.name().to_lowercase());
 
     for app in apps {
         if !app.should_show() {
             continue;
         }
 
-        let button = gtk::Button::new();
+        let button: gtk4::Button = gtk::Button::new();
         button.add_css_class("widget");
-        let box_ = gtk::Box::new(gtk::Orientation::Vertical, 6);
+        let box_: gtk4::Box = gtk::Box::new(gtk::Orientation::Vertical, 6);
 
         if let Some(icon) = app.icon() {
-            let img = gtk::Image::from_gicon(&icon);
+            let img: gtk4::Image = gtk::Image::from_gicon(&icon);
             img.set_pixel_size(32);
             box_.append(&img);
         }
 
-        let lbl = gtk::Label::new(Some(&app.name()));
+        let lbl: gtk4::Label = gtk::Label::new(Some(&app.name()));
         lbl.set_wrap(true);
         lbl.set_max_width_chars(12);
 
         box_.append(&lbl);
         button.set_child(Some(&box_));
 
-        let app = app.clone();
+        let app: gio::AppInfo = app.clone();
         button.connect_clicked(move |_| {
             if let Err(error) = app.launch(&[], None::<&gio::AppLaunchContext>,) {
                 eprintln!("Failed to launch {}: {error}", app.name());
@@ -179,10 +180,10 @@ pub fn load_apps(builder: gtk::Builder) {
 }
 
 pub fn load_css() {
-    let disp = gdk::Display::default().expect("No display");
-    let settings = gtk::Settings::default().unwrap();
+    let disp: gdk::Display = gdk::Display::default().expect("No display");
+    let settings: gtk4::Settings = gtk::Settings::default().unwrap();
 
-    let css_provider = gtk::CssProvider::new();
+    let css_provider: gtk4::CssProvider = gtk::CssProvider::new();
     css_provider.set_prefers_color_scheme(settings.gtk_interface_color_scheme());
     css_provider.load_from_path("src/main.css");
     gtk::style_context_add_provider_for_display(

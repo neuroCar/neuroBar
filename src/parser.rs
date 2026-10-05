@@ -5,15 +5,15 @@ use gtk4::gio;
 use gtk4::gio::prelude::*;
 
 pub fn parse_config() -> Result<Vec<String>, Box<dyn Error>> {
-    let path = env::home_dir().expect("Could not find home").join(".config/neuroBar/conf.neu");
-    let conf = fs::read_to_string(path)?;
+    let path: std::path::PathBuf = env::home_dir().expect("Could not find home").join(".config/neuroBar/conf.neu");
+    let conf: String = fs::read_to_string(path)?;
     let pinned: Vec<String> = conf.trim().strip_prefix("pinned: ").unwrap().split(",").map(|s| s.trim().to_string()).collect();
 
     Ok(pinned)
 }
 
 pub fn get_app_icon(name: String) -> gtk4::Image {
-    let apps = gio::AppInfo::all();
+    let apps: Vec<gio::AppInfo> = gio::AppInfo::all();
 
     for app in apps {
         if app.name().to_lowercase() == name.to_lowercase() {
@@ -28,7 +28,7 @@ pub fn get_app_icon(name: String) -> gtk4::Image {
 }
 
 pub fn launch_app(name: String) {
-    let apps = gio::AppInfo::all();
+    let apps: Vec<gio::AppInfo> = gio::AppInfo::all();
 
     for app in apps {
         if app.name() == name {

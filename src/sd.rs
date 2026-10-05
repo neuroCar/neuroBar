@@ -3,8 +3,8 @@ use zbus::*;
 use zvariant;
 
 pub async fn power_profile_fns(cmd: &str, opt: Option<&str>) -> zbus::Result<String> {
-    let connection = Connection::system().await?;
-    let proxy_ppd = Proxy::new(
+    let connection: Connection = Connection::system().await?;
+    let proxy_ppd: Proxy<'_> = Proxy::new(
         &connection,
         "org.freedesktop.UPower.PowerProfiles",
         "/org/freedesktop/UPower/PowerProfiles",
@@ -34,8 +34,8 @@ pub async fn power_profile_fns(cmd: &str, opt: Option<&str>) -> zbus::Result<Str
 }
 
 pub async fn systemd_session_fns(cmd_type: &str) -> zbus::Result<()> {
-    let connection = Connection::system().await?;
-    let proxy_m = Proxy::new(
+    let connection: Connection = Connection::system().await?;
+    let proxy_m: Proxy<'_> = Proxy::new(
         &connection,
         "org.freedesktop.login1",
         "/org/freedesktop/login1",
